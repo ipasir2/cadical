@@ -427,6 +427,14 @@ void Solver::trace_api_calls (FILE *file) {
 #endif
 /*------------------------------------------------------------------------*/
 
+int32_t Solver::assignment_size() {
+  return this->external->assignment_size();
+}
+
+int32_t Solver::assignment(int32_t index) {
+  return this->external->assignment(index);
+}
+
 bool Solver::is_valid_option (const char *name) {
   return Options::has (name);
 }

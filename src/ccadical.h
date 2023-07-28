@@ -38,6 +38,11 @@ int ccadical_constraint_failed (CCaDiCaL *);
 void ccadical_set_option (CCaDiCaL *, const char *name, int val);
 void ccadical_limit (CCaDiCaL *, const char *name, int limit);
 int ccadical_get_option (CCaDiCaL *, const char *name);
+bool ccadical_has_option (CCaDiCaL *, const char *name);
+
+int32_t ccadical_assignment_size(CCaDiCaL *wrapper);
+int32_t ccadical_assignment(CCaDiCaL *wrapper, int32_t index);
+
 void ccadical_print_statistics (CCaDiCaL *);
 int64_t ccadical_active (CCaDiCaL *);
 int64_t ccadical_irredundant (CCaDiCaL *);

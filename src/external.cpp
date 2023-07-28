@@ -16,6 +16,14 @@ External::~External () {
     delete[] solution;
 }
 
+int32_t External::assignment_size() {
+  return internal->trail.size();
+}
+
+int32_t External::assignment(int32_t index) {
+  return internal->externalize(internal->trail[index]);
+}
+
 void External::enlarge (int new_max_var) {
 
   assert (!extended);

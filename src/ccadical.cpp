@@ -95,6 +95,18 @@ int ccadical_get_option (CCaDiCaL *wrapper, const char *name) {
   return ((Wrapper *) wrapper)->solver->get (name);
 }
 
+bool ccadical_has_option (CCaDiCaL *wrapper, const char *name) {
+  return ((Wrapper *) wrapper)->solver->is_valid_option (name);
+}
+
+int32_t ccadical_assignment_size(CCaDiCaL *wrapper) {
+    return ((Wrapper *) wrapper)->solver->assignment_size();
+}
+
+int32_t ccadical_assignment(CCaDiCaL *wrapper, int32_t index) {
+    return ((Wrapper *) wrapper)->solver->assignment(index);
+}
+
 void ccadical_add (CCaDiCaL *wrapper, int lit) {
   ((Wrapper *) wrapper)->solver->add (lit);
 }

@@ -508,6 +508,18 @@ public:
 #endif
 
   //------------------------------------------------------------------------
+  // Access to internal trail even if not in SAT state.
+  //
+
+  // Number of assigned literals in the trail.
+  //
+  int32_t assignment_size();
+
+  // Get the literal at the given index in the trail.
+  //
+  int32_t assignment(int32_t index);
+
+  //------------------------------------------------------------------------
   // Option handling.
 
   // Determine whether 'name' is a valid option name.
