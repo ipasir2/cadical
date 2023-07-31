@@ -58,10 +58,6 @@ IPASIR_API ipasir2_errorcode ipasir2_set_import_redundant_clause(void* solver,
     return IPASIR_E_UNSUPPORTED;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_delete(void* solver, void* data, void (*callback)(void* data, int32_t* clause)) {
-    return IPASIR_E_UNSUPPORTED;
-}
-
 IPASIR_API ipasir2_errorcode ipasir2_assignment_size(void* solver, int32_t* result) {
     *result = ccadical_assignment_size((CCaDiCaL*)solver);
     return IPASIR_E_OK;
@@ -71,6 +67,8 @@ IPASIR_API ipasir2_errorcode ipasir2_assignment(void* solver, int32_t index, int
     *result = ccadical_assignment((CCaDiCaL*)solver, index);
     return IPASIR_E_OK;
 }
+
+// IPASIR 1.0 :
 
 IPASIR_API ipasir2_errorcode ipasir2_signature(char const** result) {
     *result = ccadical_signature();
