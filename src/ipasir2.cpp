@@ -14,7 +14,7 @@
 
 #include <cassert>
 
-#include <string>
+#include <cstring>
 #include <iostream>
 using std::string;
 
@@ -23,23 +23,29 @@ using std::string;
 
 
 IPASIR_API ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
-    ipasir2_option* solver_options = new ipasir2_option[CaDiCaL::number_of_options + 1];
+    int n_extra = 2;    
+    ipasir2_option* extra = new ipasir2_option[n_extra];
+    extra[0] = { "ipasir.limits.decisions", ipasir2_option_type::INT, -1, INT32_MAX };
+    extra[1] = { "ipasir.limits.conflicts", ipasir2_option_type::INT, -1, INT32_MAX };
+
+    ipasir2_option* solver_options = new ipasir2_option[CaDiCaL::number_of_options + n_extra + 1];
     int i = 0;
+    for (; i < n_extra; ++i) {
+        solver_options[i] = extra[i];
+    }
+
     for (CaDiCaL::Option* option = CaDiCaL::Options::begin(); option != CaDiCaL::Options::end(); ++option) {
         if (option->optimizable) {
             solver_options[i].name = option->name;
             solver_options[i].type = ipasir2_option_type::INT;
-            solver_options[i].minimum = option->lo;
-            solver_options[i].maximum = option->hi;
-            solver_options[i].is_array = 0;
-            //solver_options[i].default_value = option->def;
-            //solver_options[i].description = option->description;
-            //solver_options[i].preprocessing = option->preprocessing;
+            solver_options[i].minimum._int = option->lo;
+            solver_options[i].maximum._int = option->hi;
             ++i;
         }
     }
 
     solver_options[i] = { 0 };
+
     *result = solver_options;
     return IPASIR_E_OK;
 }
@@ -49,7 +55,17 @@ IPASIR_API ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, 
         ccadical_set_option((CCaDiCaL*)solver, name, *(int*)value);
         return IPASIR_E_OK;
     } else {
-        return IPASIR_E_OPTION_UNKNOWN;
+        if (!strcmp(name, "ipasir.limits.decisions")) {
+            ccadical_limit((CCaDiCaL*)solver, "decisions", *(int*)value);
+            return IPASIR_E_OK;
+        } 
+        else if (!strcmp(name, "ipasir.limits.conflicts")) {
+            ccadical_limit((CCaDiCaL*)solver, "conflicts", *(int*)value);
+            return IPASIR_E_OK;
+        }
+        else {
+            return IPASIR_E_OPTION_UNKNOWN;
+        }
     }
 }
 
