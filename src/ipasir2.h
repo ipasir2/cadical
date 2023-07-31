@@ -147,7 +147,26 @@ typedef enum {
 /**
  * IPASIR 2.0: This is new in IPASIR 2.0
  * 
- * TODO: describe identifier naming schema here
+ * Solver options are identified by a string name.
+ * Option identifers can be grouped into namespaces which are separated by a dot.
+ * The IPASIR-2 specification reserves the namespace "ipasir." for options defined by the IPASIR-2 specification.
+ * If a solver provides an option from the "ipasir." namespace, its behavior must be as specified in the IPASIR-2 specification.
+ * If a solver does not support a given option, it must return IPASIR_E_OPTION_UNKNOWN when the option is set.
+ * 
+ * The following options are defined by the IPASIR-2 specification:
+ * - ipasir.verbosity: int, minimum: 0, maximum: 2
+ * - ipasir.preprocessing: 
+ * - ipasir.preprocessing.subsumption: int, minimum: 0, maximum: 1
+ * - ipasir.preprocessing.bve: int, minimum: 0, maximum: 1
+ * - ipasir.preprocessing.sbva: int, minimum: 0, maximum: 1
+ * - ipasir.limits.conflicts: int, minimum: -1, maximum: INT_MAX, default: -1
+ *    - -1: no conflict limit
+ *    - 0: no conflicts (exit on first conflict)
+ *    - n: at most n conflicts
+ * - ipasir.limits.decisions: int, minimum: -1, maximum: INT_MAX, default: -1
+ *    - -1: no decision limit
+ *    - 0: no decisions (only unit propagation)
+ *    - n: at most n decisions
  * 
  * @brief Specification of options for the configuration interface
  */
