@@ -38,8 +38,8 @@ IPASIR_API ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** res
         if (option->optimizable) {
             solver_options[i].name = option->name;
             solver_options[i].type = ipasir2_option_type::INT;
-            solver_options[i].minimum._int = option->lo;
-            solver_options[i].maximum._int = option->hi;
+            solver_options[i].min._int = option->lo;
+            solver_options[i].max._int = option->hi;
             ++i;
         }
     }
@@ -50,17 +50,17 @@ IPASIR_API ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** res
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, void const* value) {
+IPASIR_API ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, ipasir2_option_value value) {
     if (ccadical_has_option((CCaDiCaL*)solver, name)) {
-        ccadical_set_option((CCaDiCaL*)solver, name, *(int*)value);
+        ccadical_set_option((CCaDiCaL*)solver, name, value._int);
         return IPASIR_E_OK;
     } else {
         if (!strcmp(name, "ipasir.limits.decisions")) {
-            ccadical_limit((CCaDiCaL*)solver, "decisions", *(int*)value);
+            ccadical_limit((CCaDiCaL*)solver, "decisions", value._int);
             return IPASIR_E_OK;
         } 
         else if (!strcmp(name, "ipasir.limits.conflicts")) {
-            ccadical_limit((CCaDiCaL*)solver, "conflicts", *(int*)value);
+            ccadical_limit((CCaDiCaL*)solver, "conflicts", value._int);
             return IPASIR_E_OK;
         }
         else {
