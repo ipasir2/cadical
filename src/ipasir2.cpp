@@ -22,6 +22,8 @@ using std::string;
 #include "options.hpp"
 
 
+// Configuration
+
 IPASIR_API ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
     int n_extra = 2;    
     ipasir2_option* extra = new ipasir2_option[n_extra];
@@ -69,10 +71,8 @@ IPASIR_API ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, 
     }
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_import_redundant_clause(void* solver,
-  void (*callback)(void* solver, int** literals, void* meta_data), void* state) {
-    return IPASIR_E_UNSUPPORTED;
-}
+
+// Experimental
 
 IPASIR_API ipasir2_errorcode ipasir2_assignment_size(void* solver, int32_t* result) {
     *result = ccadical_assignment_size((CCaDiCaL*)solver);
@@ -84,7 +84,8 @@ IPASIR_API ipasir2_errorcode ipasir2_assignment(void* solver, int32_t index, int
     return IPASIR_E_OK;
 }
 
-// IPASIR 1.0 :
+
+// Basic IPASIR
 
 IPASIR_API ipasir2_errorcode ipasir2_signature(char const** result) {
     *result = ccadical_signature();
@@ -126,6 +127,9 @@ IPASIR_API ipasir2_errorcode ipasir2_failed(void* solver, int32_t lit, int* resu
     return IPASIR_E_OK;
 }
 
+
+// Callbacks
+
 IPASIR_API ipasir2_errorcode ipasir2_set_terminate(void* solver, void* data, int (*terminate)(void* data)) {
     ccadical_set_terminate((CCaDiCaL*)solver, data, terminate);
     return IPASIR_E_OK;
@@ -134,4 +138,9 @@ IPASIR_API ipasir2_errorcode ipasir2_set_terminate(void* solver, void* data, int
 IPASIR_API ipasir2_errorcode ipasir2_set_learn(void* solver, void* data, void (*callback)(void* data, int32_t* clause)) {
     ccadical_set_learn((CCaDiCaL*)solver, data, INT32_MAX, callback);
     return IPASIR_E_OK;
+}
+
+IPASIR_API ipasir2_errorcode ipasir2_set_import_redundant_clause(void* solver, void* data, 
+  void (*callback)(void* solver, int32_t** literals)) {
+    return IPASIR_E_UNSUPPORTED;
 }
