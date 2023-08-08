@@ -24,7 +24,7 @@ using std::string;
 
 // Configuration
 
-IPASIR_API ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
+ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
     int n_extra = 2;    
     ipasir2_option* extra = new ipasir2_option[n_extra];
     extra[0] = { "ipasir.limits.decisions", -1, INT32_MAX, IPASIR2_STATE_INPUT, false };
@@ -53,7 +53,7 @@ IPASIR_API ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** res
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, int64_t value) {
+ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, int64_t value) {
     if (ccadical_has_option((CCaDiCaL*)solver, name)) {
         ccadical_set_option((CCaDiCaL*)solver, name, value);
         return IPASIR_E_OK;
@@ -75,42 +75,42 @@ IPASIR_API ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, 
 
 // Basic IPASIR
 
-IPASIR_API ipasir2_errorcode ipasir2_signature(char const** result) {
+ipasir2_errorcode ipasir2_signature(char const** result) {
     *result = ccadical_signature();
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_init(void** result) {
+ipasir2_errorcode ipasir2_init(void** result) {
     *result = ccadical_init();
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_release(void* solver) {
+ipasir2_errorcode ipasir2_release(void* solver) {
     ccadical_release((CCaDiCaL*)solver);
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_add(void* solver, int32_t lit_or_zero) {
+ipasir2_errorcode ipasir2_add(void* solver, int32_t lit_or_zero) {
     ccadical_add((CCaDiCaL*)solver, lit_or_zero);
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_assume(void* solver, int32_t lit) {
+ipasir2_errorcode ipasir2_assume(void* solver, int32_t lit) {
     ccadical_assume((CCaDiCaL*)solver, lit);
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_solve(void* solver, int* result) {
+ipasir2_errorcode ipasir2_solve(void* solver, int* result) {
     *result = ccadical_solve((CCaDiCaL*)solver);
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_val(void* solver, int32_t lit, int32_t* result) {
+ipasir2_errorcode ipasir2_val(void* solver, int32_t lit, int32_t* result) {
     *result = ccadical_val((CCaDiCaL*)solver, lit);
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_failed(void* solver, int32_t lit, int* result) {
+ipasir2_errorcode ipasir2_failed(void* solver, int32_t lit, int* result) {
     *result = ccadical_failed((CCaDiCaL*)solver, lit);
     return IPASIR_E_OK;
 }
@@ -118,29 +118,29 @@ IPASIR_API ipasir2_errorcode ipasir2_failed(void* solver, int32_t lit, int* resu
 
 // Callbacks
 
-IPASIR_API ipasir2_errorcode ipasir2_set_terminate(void* solver, void* data, 
+ipasir2_errorcode ipasir2_set_terminate(void* solver, void* data, 
         int (*terminate)(void* data)) {
     ccadical_set_terminate((CCaDiCaL*)solver, data, terminate);
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_learn(void* solver, void* data,
-        void (*callback)(void* data, int32_t* clause)) {
-    ccadical_set_learn((CCaDiCaL*)solver, data, INT32_MAX, callback);
+ipasir2_errorcode ipasir2_set_learn(void* solver, void* data,
+        void (*learned)(void* data, int32_t const* clause)) {
+    ccadical_set_learn((CCaDiCaL*)solver, data, INT32_MAX, learned);
     return IPASIR_E_OK;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_notify_assignment(void* solver, void* data, 
+ipasir2_errorcode ipasir2_set_notify_assignment(void* solver, void* data, 
         void (*notify)(void* data, int32_t const* assigned, int32_t const* backtrack, int8_t const* is_decision)) {
     return IPASIR_E_UNSUPPORTED;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_import_redundant_clause(void* solver, void* data, 
+ipasir2_errorcode ipasir2_set_import_redundant_clause(void* solver, void* data, 
         int32_t const* (*import)(void* data)) {
     return IPASIR_E_UNSUPPORTED;
 }
 
-IPASIR_API ipasir2_errorcode ipasir2_set_import_irredundant_clause(void* solver, void* data, 
+ipasir2_errorcode ipasir2_set_import_irredundant_clause(void* solver, void* data, 
         int32_t* allowed, int32_t const* (*import)(void* data)) {
     return IPASIR_E_UNSUPPORTED;
 }

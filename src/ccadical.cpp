@@ -17,7 +17,7 @@ struct Wrapper : Learner, Terminator {
     void *state;
     int max_length;
     int *begin_clause, *end_clause, *capacity_clause;
-    void (*function) (void *, int *);
+    void (*function) (void *, int const*);
   } learner;
 
   bool terminate () {
@@ -163,7 +163,7 @@ void ccadical_set_terminate (CCaDiCaL *ptr, void *state,
 }
 
 void ccadical_set_learn (CCaDiCaL *ptr, void *state, int max_length,
-                         void (*learn) (void *state, int *clause)) {
+                         void (*learn) (void *state, int const* clause)) {
   Wrapper *wrapper = (Wrapper *) ptr;
   wrapper->learner.state = state;
   wrapper->learner.max_length = max_length;
