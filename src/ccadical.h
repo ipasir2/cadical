@@ -29,6 +29,9 @@ void ccadical_set_terminate (CCaDiCaL *, void *state,
 void ccadical_set_learn (CCaDiCaL *, void *state, int max_length,
                          void (*learn) (void *state, int const* clause));
 
+void ccadical_set_notify (CCaDiCaL *ptr, void *state, 
+                          void (*notify) (void *, int32_t const*, int32_t const*));
+
 /*------------------------------------------------------------------------*/
 
 // Non-IPASIR conformant 'C' functions.
