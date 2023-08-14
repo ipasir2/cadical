@@ -51,7 +51,7 @@ ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, int64_t value) {
+ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, int64_t index, int64_t value) {
     if (ccadical_has_option((CCaDiCaL*)solver, name)) {
         ccadical_set_option((CCaDiCaL*)solver, name, value);
         return IPASIR2_E_OK;
@@ -131,7 +131,7 @@ ipasir2_errorcode ipasir2_set_export(void* solver, void* data, int32_t max_lengt
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_set_import(void* solver, void* data, 
+ipasir2_errorcode ipasir2_set_import(void* solver, void* data, ipasir2_pledge pledge,
         int32_t const* (*import)(void* data)) {
     return IPASIR2_E_UNSUPPORTED;
 }
