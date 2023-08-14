@@ -174,6 +174,14 @@ void ccadical_set_learn (CCaDiCaL *ptr, void *state, int max_length,
     wrapper->solver->disconnect_learner ();
 }
 
+void ccadical_set_notify (CCaDiCaL *ptr, void *state, void (*notify) (void *, int32_t const*, int32_t const*)) {
+  Wrapper *wrapper = (Wrapper *) ptr;
+  if (notify)
+    wrapper->solver->connect_notifier (state, notify);
+  else
+    wrapper->solver->disconnect_notifier ();
+}
+
 void ccadical_freeze (CCaDiCaL *ptr, int lit) {
   ((Wrapper *) ptr)->solver->freeze (lit);
 }

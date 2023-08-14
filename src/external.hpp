@@ -92,6 +92,22 @@ struct External {
   void export_learned_unit_clause (int ilit);
   void export_learned_large_clause (const vector<int> &);
 
+  // Assignment notifier
+  vector<int32_t> notify_assigned;
+  vector<int32_t> notify_unassigned;
+  void* notify_state;
+  void (*notify) (void *, int32_t const*, int32_t const*);
+
+  void ipasir2_notify() {
+    if (notify) {
+      notify_assigned.push_back(0);
+      notify_unassigned.push_back(0);
+      notify(notify_state, notify_assigned.data(), notify_unassigned.data());
+      notify_assigned.clear();
+      notify_unassigned.clear();
+    }
+  }
+
   // If there is an external propagator.
 
   ExternalPropagator *propagator;

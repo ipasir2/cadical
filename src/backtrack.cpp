@@ -14,6 +14,10 @@ inline void Internal::unassign (int lit) {
   vals[-idx] = 0;
   LOG ("unassign %d @ %d", lit, var (idx).level);
 
+  if (external->notify) {
+    external->notify_unassigned.push_back(externalize(lit));
+  }
+
   // In the standard EVSIDS variable decision heuristic of MiniSAT, we need
   // to push variables which become unassigned back to the heap.
   //

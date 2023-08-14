@@ -882,6 +882,14 @@ bool Internal::external_check_solution () {
 // Notify the external propagator that an observed variable got assigned.
 //
 void Internal::notify_assignments () {
+  // IPASIR-2 begin
+  if (external->notify) {
+    const size_t end_of_trail = trail.size ();
+    for (int i = notified; i < end_of_trail; ++i) {
+      external->notify_assigned.push_back(externalize(trail[i]));
+    }
+  } // IPASIR-2 end
+
   if (!external_prop || external_prop_is_lazy)
     return;
 

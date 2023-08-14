@@ -819,6 +819,35 @@ void Solver::disconnect_learner () {
   LOG_API_CALL_END ("disconnect_learner");
 }
 
+void Solver::connect_notifier (void* state, void (*notify) (void *, int32_t const*, int32_t const*)) {
+  LOG_API_CALL_BEGIN ("connect_notify");
+  REQUIRE_VALID_STATE ();
+  REQUIRE (notify, "can not connect zero notify");
+#ifdef LOGGING
+  if (external->notify)
+    LOG ("connecting new notify (disconnecting previous one)");
+  else
+    LOG ("connecting new notify (no previous one)");
+#endif
+  external->notify_state = state;
+  external->notify = notify;
+  LOG_API_CALL_END ("connect_notify");
+}
+
+void Solver::disconnect_notifier () {
+  LOG_API_CALL_BEGIN ("disconnect_notify");
+  REQUIRE_VALID_STATE ();
+#ifdef LOGGING
+  if (external->notify)
+    LOG ("disconnecting previous notify");
+  else
+    LOG ("ignoring to disconnect notify (no previous one)");
+#endif
+  external->notify_state = 0;
+  external->notify = 0;
+  LOG_API_CALL_END ("disconnect_notify");
+}
+
 /*===== IPASIR END =======================================================*/
 
 /*===== IPASIR-UP BEGIN ==================================================*/

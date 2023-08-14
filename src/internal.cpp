@@ -254,6 +254,8 @@ int Internal::cdcl_loop_with_inprocessing () {
       condition (); // globally blocked clauses
     else
       res = decide (); // next decision
+
+    external->ipasir2_notify();
   }
 
   if (stable) {

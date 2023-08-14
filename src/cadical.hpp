@@ -322,6 +322,11 @@ public:
   void connect_learner (Learner *learner);
   void disconnect_learner ();
 
+  // Add call-back which allows to export assignments.
+  //
+  void connect_notifier (void* state, void (*notify) (void *, int32_t const*, int32_t const*));
+  void disconnect_notifier ();
+
   // ====== END IPASIR =====================================================
 
   // ====== BEGIN IPASIR-UP ================================================
