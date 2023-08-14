@@ -257,7 +257,7 @@ int Internal::cdcl_loop_with_inprocessing () {
 
     external->ipasir2_notify();
   }
-
+  
   if (stable) {
     STOP (stable);
     report (']');
@@ -673,6 +673,7 @@ int Internal::solve (bool preprocess_only) {
   else
     LOG ("internal solving in full mode");
   init_report_limits ();
+  notify_assignments (); // also care about original units and propagations
   int res = already_solved ();
   if (!res)
     res = restore_clauses ();
@@ -691,6 +692,7 @@ int Internal::solve (bool preprocess_only) {
     if (!res || external_prop)
       res = cdcl_loop_with_inprocessing ();
   }
+  external->ipasir2_notify();
   finalize ();
   reset_solving ();
   report_solving (res);

@@ -95,17 +95,25 @@ struct External {
   // Assignment notifier
   vector<int32_t> notify_assigned;
   vector<int32_t> notify_unassigned;
-  void* notify_state;
-  void (*notify) (void *, int32_t const*, int32_t const*);
+  void* notify_state = 0;
+  void (*notify) (void *, int32_t const*, int32_t const*) = 0;
 
   void ipasir2_notify() {
-    if (notify) {
+    // printf("ipasir2_notify() called\n");
+    // if (notify == nullptr) {
+    //   printf("notify is not set\n");
+    //   return;
+    // }
+    if (notify != nullptr && (notify_assigned.size() > 0 || notify_unassigned.size() > 0)) {
       notify_assigned.push_back(0);
       notify_unassigned.push_back(0);
       notify(notify_state, notify_assigned.data(), notify_unassigned.data());
       notify_assigned.clear();
       notify_unassigned.clear();
     }
+    // else {
+    //   printf("notify is set but notify_assigned and notify_unassigned are empty\n");
+    // }
   }
 
   // If there is an external propagator.

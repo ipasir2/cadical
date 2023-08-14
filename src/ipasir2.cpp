@@ -139,4 +139,5 @@ ipasir2_errorcode ipasir2_set_import(void* solver, void* data, ipasir2_pledge pl
 ipasir2_errorcode ipasir2_set_notify(void* solver, void* data, 
         void (*notify)(void* data, int32_t const* assigned, int32_t const* unassigned)) {
     ccadical_set_notify((CCaDiCaL*)solver, data, notify);
+    return IPASIR2_E_OK;
 }

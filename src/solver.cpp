@@ -829,6 +829,7 @@ void Solver::connect_notifier (void* state, void (*notify) (void *, int32_t cons
   else
     LOG ("connecting new notify (no previous one)");
 #endif
+  // internal->opts.log = true;
   external->notify_state = state;
   external->notify = notify;
   LOG_API_CALL_END ("connect_notify");
