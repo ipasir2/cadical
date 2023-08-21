@@ -24,8 +24,8 @@ using std::string;
 ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
     int n_extra = 2;    
     ipasir2_option* extra = new ipasir2_option[n_extra];
-    extra[0] = { "ipasir.limits.decisions", -1, INT32_MAX, IPASIR2_S_INPUT, false };
-    extra[1] = { "ipasir.limits.conflicts", -1, INT32_MAX, IPASIR2_S_INPUT, false };
+    extra[0] = { "ipasir.limits.decisions", -1, INT32_MAX, IPASIR2_S_INPUT, false, false, (void const*)nullptr };
+    extra[1] = { "ipasir.limits.conflicts", -1, INT32_MAX, IPASIR2_S_INPUT, false, false, (void const*)nullptr };
 
     ipasir2_option* solver_options = new ipasir2_option[CaDiCaL::number_of_options + n_extra + 1];
     int i = 0;
@@ -41,31 +41,30 @@ ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
             solver_options[i].max_state = IPASIR2_S_CONFIG; // TODO: figure out eligible states and better default. conservative for now.
             solver_options[i].tunable = option->optimizable;
             solver_options[i].indexed = false;
+            solver_options[i].handle = (void const*)nullptr;
             ++i;
         }
     }
 
-    solver_options[i] = { 0 };
+    solver_options[i] = { nullptr, 0, 0, IPASIR2_S_CONFIG, false, false, (void const*)nullptr};
 
     *result = solver_options;
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_set_option(void* solver, char const* name, int64_t index, int64_t value) {
-    if (ccadical_has_option((CCaDiCaL*)solver, name)) {
-        ccadical_set_option((CCaDiCaL*)solver, name, value);
+ipasir2_errorcode ipasir2_set_option(void* solver, ipasir2_option const* handle, int64_t value, int64_t index) {
+    //TODO: use handle for setting options
+    if (ccadical_has_option((CCaDiCaL*)solver, handle->name)) {
+        ccadical_set_option((CCaDiCaL*)solver, handle->name, value);
         return IPASIR2_E_OK;
     } else {
-        if (!strcmp(name, "ipasir.limits.decisions")) {
+        if (!strcmp(handle->name, "ipasir.limits.decisions")) {
             ccadical_limit((CCaDiCaL*)solver, "decisions", value);
             return IPASIR2_E_OK;
         } 
-        else if (!strcmp(name, "ipasir.limits.conflicts")) {
+        else if (!strcmp(handle->name, "ipasir.limits.conflicts")) {
             ccadical_limit((CCaDiCaL*)solver, "conflicts", value);
             return IPASIR2_E_OK;
-        }
-        else {
-            return IPASIR2_E_OPTION_UNKNOWN;
         }
     }
 }
@@ -131,13 +130,13 @@ ipasir2_errorcode ipasir2_set_export(void* solver, void* data, int32_t max_lengt
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_set_import(void* solver, void* data, ipasir2_pledge pledge,
-        int32_t const* (*import)(void* data)) {
+ipasir2_errorcode ipasir2_set_import(void* solver, void* data, ipasir2_redundancy pledge,
+        void (*callback)(void* data, int32_t const** clause, ipasir2_redundancy* pledge)) {
     return IPASIR2_E_UNSUPPORTED;
 }
 
 ipasir2_errorcode ipasir2_set_notify(void* solver, void* data, 
-        void (*notify)(void* data, int32_t const* assigned, int32_t const* unassigned)) {
-    ccadical_set_notify((CCaDiCaL*)solver, data, notify);
+        void (*callback)(void* data, int32_t const* assigned, int32_t const* unassigned)) {
+    ccadical_set_notify((CCaDiCaL*)solver, data, callback);
     return IPASIR2_E_OK;
 }
