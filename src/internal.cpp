@@ -673,7 +673,6 @@ int Internal::solve (bool preprocess_only) {
   else
     LOG ("internal solving in full mode");
   init_report_limits ();
-  notify_assignments (); // also care about original units and propagations
   int res = already_solved ();
   if (!res)
     res = restore_clauses ();
@@ -684,6 +683,7 @@ int Internal::solve (bool preprocess_only) {
   }
   if (!res)
     res = preprocess ();
+  notify_assignments (); // also care about original units and propagations
   if (!preprocess_only) {
     if (!res)
       res = local_search ();
