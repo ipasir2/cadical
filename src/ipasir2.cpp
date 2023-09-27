@@ -85,7 +85,7 @@ ipasir2_errorcode ipasir2_release(void* solver) {
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_add(void* solver, int32_t* clause, int32_t len, ipasir2_redundancy type) {
+ipasir2_errorcode ipasir2_add(void* solver, int32_t const* clause, int32_t len, ipasir2_redundancy type) {
     for (int i = 0; i < len; ++i) {
         ccadical_add((CCaDiCaL*)solver, clause[i]);
     }
@@ -93,7 +93,7 @@ ipasir2_errorcode ipasir2_add(void* solver, int32_t* clause, int32_t len, ipasir
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_solve(void* solver, int* result, int32_t* assumps, int32_t len) {
+ipasir2_errorcode ipasir2_solve(void* solver, int* result, int32_t const* assumps, int32_t len) {
     for (int i = 0; i < len; ++i) {
         ccadical_assume((CCaDiCaL*)solver, assumps[i]);
     }
