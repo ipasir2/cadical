@@ -13,6 +13,8 @@
 
 #include <cstring>
 #include <iostream>
+#include <vector>
+
 using std::string;
 
 #include "config.hpp"
@@ -22,35 +24,47 @@ using std::string;
 // Configuration
 
 ipasir2_errorcode ipasir2_options(void* S, ipasir2_option const** result) {
-    int n_extra = 2;    
-    ipasir2_option* extra = new ipasir2_option[n_extra];
-    extra[0] = { "ipasir.limits.decisions", -1, INT32_MAX, IPASIR2_S_INPUT, false, false, 
-                    (void const*) +[] (void* solver, ipasir2_option const* opt, int64_t value) { ccadical_limit((CCaDiCaL*)solver, "decisions", value); } };
-    extra[1] = { "ipasir.limits.conflicts", -1, INT32_MAX, IPASIR2_S_INPUT, false, false, 
-                    (void const*) +[] (void* solver, ipasir2_option const* opt, int64_t value) { ccadical_limit((CCaDiCaL*)solver, "conflicts", value); } };
+    // ipasir2_options() can be called concurrently. Initializing option_defs with the
+    // result of a function call is thread-safe - hence the initialization code is wrapped
+    // in a lambda:
+    static std::vector<ipasir2_option> const option_defs = []() {
+        int n_extra = 2;
 
-    ipasir2_option* solver_options = new ipasir2_option[CaDiCaL::number_of_options + n_extra + 1];
-    int i = 0;
-    for (; i < n_extra; ++i) {
-        solver_options[i] = extra[i];
-    }
+        std::vector<ipasir2_option> extra;
+        extra.resize(n_extra);
 
-    for (CaDiCaL::Option* option = CaDiCaL::Options::begin(); option != CaDiCaL::Options::end(); ++option) {
-        if (option->optimizable) {
-            solver_options[i].name = option->name;
-            solver_options[i].min = option->lo;
-            solver_options[i].max = option->hi;
-            solver_options[i].max_state = IPASIR2_S_CONFIG; // TODO: figure out eligible states and pick better default. being conservative for now.
-            solver_options[i].tunable = option->optimizable;
-            solver_options[i].indexed = false;
-            solver_options[i].handle = (void const*) +[] (CCaDiCaL* solver, ipasir2_option const* opt, int64_t value) { ccadical_set_option(solver, opt->name, value); };
-            ++i;
+        extra[0] = { "ipasir.limits.decisions", -1, INT32_MAX, IPASIR2_S_INPUT, 0, 0,
+                        (void const*) +[] (void* solver, ipasir2_option const* opt, int64_t value) { ccadical_limit((CCaDiCaL*)solver, "decisions", value); } };
+        extra[1] = { "ipasir.limits.conflicts", -1, INT32_MAX, IPASIR2_S_INPUT, 0, 0,
+                        (void const*) +[] (void* solver, ipasir2_option const* opt, int64_t value) { ccadical_limit((CCaDiCaL*)solver, "conflicts", value); } };
+
+        std::vector<ipasir2_option> solver_options;
+        solver_options.resize(CaDiCaL::number_of_options + n_extra + 1);
+
+        int i = 0;
+        for (; i < n_extra; ++i) {
+            solver_options[i] = extra[i];
         }
-    }
 
-    solver_options[i] = { nullptr, 0, 0, IPASIR2_S_CONFIG, false, false, (void const*)nullptr};
+        for (CaDiCaL::Option* option = CaDiCaL::Options::begin(); option != CaDiCaL::Options::end(); ++option) {
+            if (option->optimizable) {
+                solver_options[i].name = option->name;
+                solver_options[i].min = option->lo;
+                solver_options[i].max = option->hi;
+                solver_options[i].max_state = IPASIR2_S_CONFIG; // TODO: figure out eligible states and pick better default. being conservative for now.
+                solver_options[i].tunable = option->optimizable;
+                solver_options[i].indexed = 0;
+                solver_options[i].handle = (void const*) +[] (CCaDiCaL* solver, ipasir2_option const* opt, int64_t value) { ccadical_set_option(solver, opt->name, value); };
+                ++i;
+            }
+        }
 
-    *result = solver_options;
+        solver_options[i] = { nullptr, 0, 0, IPASIR2_S_CONFIG, 0, 0, (void const*)nullptr};
+
+        return solver_options;
+    }();
+
+    *result = option_defs.data();
     return IPASIR2_E_OK;
 }
 
