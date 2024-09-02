@@ -99,7 +99,7 @@ ipasir2_errorcode ipasir2_release(void* solver) {
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_add(void* solver, int32_t const* clause, int32_t len, ipasir2_redundancy type) {
+ipasir2_errorcode ipasir2_add(void* solver, int32_t const* clause, int32_t len, int32_t forgettable) {
     for (int i = 0; i < len; ++i) {
         ccadical_add((CCaDiCaL*)solver, clause[i]);
     }
@@ -143,8 +143,7 @@ ipasir2_errorcode ipasir2_set_export(void* solver, void* data, int32_t max_lengt
     return IPASIR2_E_OK;
 }
 
-ipasir2_errorcode ipasir2_set_import(void* solver, void* data, ipasir2_redundancy pledge,
-        void (*callback)(void* data, ipasir2_redundancy max)) {
+ipasir2_errorcode ipasir2_set_import(void* solver, void* data, void (*callback)(void* data)) {
     return IPASIR2_E_UNSUPPORTED;
 }
 
